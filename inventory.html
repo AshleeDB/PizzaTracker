@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Inventory Dashboard</title>
+    <style>
+        .low-stock {
+            color: red;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+<h2>Ingredient Inventory</h2>
+<table border="1" cellpadding="5">
+    <thead>
+    <tr>
+        <th>Ingredient</th>
+        <th>Quantity</th>
+        <th>Next Restock Date</th>
+    </tr>
+    </thead>
+    <tbody id="ingredientTable"></tbody>
+</table>
+
+<script>
+    function fetchInventory() {
+        fetch("http://localhost:8080/ingredients")
+            .then(res => res.json())
+            .then(data => {
+                const table = document.getElementById("ingredientTable");
+                table.innerHTML = "";
+
+                data.forEach(ingredient => {
+                    const isLow = ingredient.quantity < 5;
+                    const row = document.createElement("tr");
+
+                    row.innerHTML = `
+                            <td>${ingredient.name}</td>
+                            <td class="${isLow ? 'low-stock' : ''}">
+                                ${ingredient.quantity} ${isLow ? '⚠️ Low' : ''}
+                            </td>
+                            <td>${ingredient.nextRestockDate}</td>
+                        `;
+
+                    table.appendChild(row);
+                });
+            });
+    }
+    setInterval(fetchInventory, 10000); //Auto-Refresh Every 10s
+
+    fetchInventory();
+</script>
+</body>
+</html>

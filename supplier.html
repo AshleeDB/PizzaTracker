@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Supplier Info</title>
+</head>
+<body>
+<h2>Supplier Contacts</h2>
+<table border="1" cellpadding="5">
+  <thead>
+  <tr>
+    <th>Company Name</th>
+    <th>Email</th>
+    <th>Phone</th>
+  </tr>
+  </thead>
+  <tbody id="supplierTable"></tbody>
+</table>
+
+<script>
+  function fetchSuppliers() {
+    fetch("http://localhost:8080/suppliers")
+            .then(res => res.json())
+            .then(data => {
+              const table = document.getElementById("supplierTable");
+              table.innerHTML = "";
+
+              data.forEach(supplier => {
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                            <td>${supplier.name}</td>
+                            <td><a href="mailto:${supplier.email}">${supplier.email}</a></td>
+                            <td>${supplier.phone}</td>
+                        `;
+                table.appendChild(row);
+              });
+            });
+  }
+
+  fetchSuppliers();
+</script>
+</body>
+</html>

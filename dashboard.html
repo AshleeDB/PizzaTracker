@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Slice Tracker Dashboard</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #fef9f5;
+            color: #333;
+        }
+
+        header {
+            background: #fff;
+            padding: 20px;
+            text-align: center;
+            border-bottom: 2px solid #ffd166;
+        }
+
+        header img {
+            max-height: 70px;
+        }
+
+        header h1 {
+            margin: 10px 0 0;
+            font-size: 24px;
+            color: #d62828;
+        }
+
+        .tab {
+            display: flex;
+            justify-content: center;
+            background-color: #ffd166;
+            padding: 10px;
+        }
+
+        .tab button {
+            background-color: white;
+            border: none;
+            padding: 10px 20px;
+            margin: 0 5px;
+            cursor: pointer;
+            font-size: 16px;
+            border-radius: 5px;
+        }
+
+        .tab button:hover {
+            background-color: #ffe6a7;
+        }
+
+        .tabcontent {
+            display: none;
+            padding: 20px;
+        }
+
+        .tabcontent.active {
+            display: block;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        table, th, td {
+            border: 1px solid #ccc;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+
+        .low-stock {
+            color: red;
+            font-weight: bold;
+        }
+
+        button {
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <img src="pizza-logo.png" alt="Slice Tracker Logo">
+    <h1>Slice Tracker Dashboard</h1>
+</header>
+
+<div class="tab">
+    <button onclick="showTab('orderTab')">Take Order</button>
+    <button onclick="showTab('inventoryTab')">Inventory</button>
+    <button onclick="showTab('supplierTab')">Suppliers</button>
+</div>
+
+<div id="orderTab" class="tabcontent">
+    <h2>Take Customer Order</h2>
+    <form onsubmit="submitOrder(event)">
+        <div id="menuList"></div>
+        <p><strong>Total: $<span id="total">0.00</span></strong></p>
+        <button type="submit">Submit Order</button>
+    </form>
+</div>
+
+<div id="inventoryTab" class="tabcontent">
+    <h2>Inventory Overview</h2>
+    <table>
+        <thead>
+        <tr>
+            <th>Ingredient</th>
+            <th>Quantity</th>
+            <th>Next Restock</th>
+            <th>Add Stock</th>
+        </tr>
+        </thead>
+        <tbody id="ingredientTable"></tbody>
+    </table>
+</div>
+
+<div id="supplierTab" class="tabcontent">
+    <h2>Supplier Information</h2>
+    <table>
+        <thead>
+        <tr><th>Name</th><th>Email</th><th>Phone</th></tr>
+        </thead>
+        <tbody id="supplierTable"></tbody>
+    </table>
+</div>
+
+<script>
+    let menuItems = [];
+
+    function showTab(tabId) {
+        document.querySelectorAll(".tabcontent").forEach(el => el.classList.remove("active"));
+        document.getElementById(tabId).classList.add("active");
+    }
+
+    function fetchMenu() {
+        fetch("http://localhost:8080/menu")
+            .then(res => res.json())
+            .then(data => {
+                menuItems = data;
+                const allMenuItems = [
+                    { id: 1, name: "Pepperoni Pizza", price: 12.99 },
+                    { id: 2, name: "Cheese Pizza", price: 10.99 },
+                    { id: 3, name: "Margarita Pizza", price: 10.99 },
+                    { id: 4, name: "Supreme Pizza", price: 10.99 },
+                    { id: 5, name: "Veggie Pizza", price: 10.99 },
+                    { id: 6, name: "Hawaiian Pizza", price: 10.99 },
+                    { id: 7, name: "Garlic Bread", price: 10.99 },
+                    { id: 8, name: "Zeppoles Bread", price: 10.99 },
+                    { id: 9, name: "Chocolate Cake Slice", price: 10.99 },
+                    { id: 10, name: "Soda", price: 2.50 }
+                ];
+
+                const menuList = document.getElementById("menuList");
+                menuList.innerHTML = "";
+                allMenuItems.forEach(item => {
+                    const match = data.find(i => i.id === item.id);
+                    const ingredientsTooltip = match && match.ingredients.length > 0
+                        ? match.ingredients.map(mi => mi.ingredient?.name).join(', ')
+                        : 'No ingredient data';
+
+                    const div = document.createElement("div");
+                    div.innerHTML = match ? `
+                        <label title="${ingredientsTooltip}">${item.name} ($${item.price})</label>
+                        <input type="number" min="0" value="0" data-id="${item.id}" data-price="${item.price}" onchange="updateTotal()"><br>
+                    ` : `
+                        <label title="${ingredientsTooltip}" style="color:grey;">${item.name} ($${item.price}) - <strong>Sold Out</strong></label><br>
+                    `;
+                    menuList.appendChild(div);
+                });
+            });
+    }
+
+    function updateTotal() {
+        let total = 0;
+        document.querySelectorAll("#menuList input").forEach(input => {
+            const qty = parseInt(input.value) || 0;
+            const price = parseFloat(input.getAttribute("data-price"));
+            total += qty * price;
+        });
+        document.getElementById("total").innerText = total.toFixed(2);
+    }
+
+    function submitOrder(e) {
+        e.preventDefault();
+        const order = [];
+        document.querySelectorAll("#menuList input").forEach(input => {
+            const qty = parseInt(input.value);
+            if (qty > 0) {
+                order.push({
+                    menuItemId: parseInt(input.getAttribute("data-id")),
+                    quantity: qty
+                });
+            }
+        });
+
+        fetch("http://localhost:8080/order", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(order)
+        })
+            .then(res => res.text())
+            .then(msg => {
+                alert(msg);
+                location.reload();
+            });
+    }
+
+    function fetchInventory() {
+        fetch("http://localhost:8080/ingredients")
+            .then(res => res.json())
+            .then(data => {
+                const table = document.getElementById("ingredientTable");
+                table.innerHTML = "";
+
+                data.forEach(i => {
+                    const row = document.createElement("tr");
+                    row.innerHTML = `
+                        <td>${i.name}</td>
+                        <td class="${i.quantity < 5 ? 'low-stock' : ''}">
+                            ${i.quantity} ${i.quantity < 5 ? '⚠️ Low' : ''}
+                        </td>
+                        <td>${i.nextRestockDate}</td>
+                        <td>
+                            <input type="number" id="add-${i.id}" placeholder="0" min="1" style="width:60px;">
+                            <button onclick="updateInventory(${i.id})">Update</button>
+                        </td>
+                    `;
+                    table.appendChild(row);
+                });
+            });
+    }
+
+    function updateInventory(id) {
+        const amount = document.getElementById(`add-${id}`).value;
+        if (amount && amount > 0) {
+            fetch(`http://localhost:8080/ingredients/${id}/add?amount=${amount}`, {
+                method: "PUT"
+            })
+                .then(res => res.text())
+                .then(msg => {
+                    alert(msg);
+                    fetchInventory(); // refresh table
+                });
+        } else {
+            alert("Please enter a valid amount.");
+        }
+    }
+
+    function fetchSuppliers() {
+        fetch("http://localhost:8080/suppliers")
+            .then(res => res.json())
+            .then(data => {
+                const table = document.getElementById("supplierTable");
+                table.innerHTML = "";
+                data.forEach(s => {
+                    const row = document.createElement("tr");
+                    row.innerHTML = `
+                        <td>${s.name}</td>
+                        <td><a href="mailto:${s.email}">${s.email}</a></td>
+                        <td>${s.phone}</td>
+                    `;
+                    table.appendChild(row);
+                });
+            });
+    }
+
+    fetchMenu();
+    fetchInventory();
+    fetchSuppliers();
+    showTab('orderTab');
+</script>
+
+</body>
+</html>
