@@ -1,55 +1,75 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Customer Login</title>
+    <meta charset="UTF-8">
+    <title>Slice Tracker - Customer Login</title>
     <link rel="icon" href="pizza-logo.png" type="image/png">
     <style>
         body {
-            background: #fff7eb;
+            background: linear-gradient(to right, #f8f7f7, #e6e6e6);
             font-family: 'Segoe UI', sans-serif;
             display: flex;
-            flex-direction: column;
             align-items: center;
             justify-content: center;
             height: 100vh;
             margin: 0;
+            color: #333; /* Changed to dark text for better readability */
         }
 
         .login-box {
-            background: #fff;
-            padding: 30px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 40px;
             border-radius: 16px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
             text-align: center;
+            width: 300px;
+            backdrop-filter: blur(10px);
         }
 
         .login-box img {
-            width: 80px;
-            margin-bottom: 10px;
+            width: 100px;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            margin: 0 0 10px;
+            color: #ff914d; /* Pizzeria name color */
+            font-size: 28px;
+            font-weight: bold;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
         }
 
         h2 {
             margin: 0 0 20px;
-            color: #333;
+            color: #333; /* Dark text for better readability */
+            font-size: 24px;
         }
 
         input {
             width: 100%;
-            padding: 10px;
-            margin: 8px 0;
+            padding: 12px;
+            margin: 10px 0;
             border: 1px solid #ccc;
             border-radius: 8px;
+            transition: border-color 0.3s;
+        }
+
+        input:focus {
+            border-color: #ff914d;
+            outline: none;
         }
 
         button {
             width: 100%;
-            padding: 10px;
+            padding: 12px;
             background: #ff914d;
             color: white;
             font-weight: bold;
             border: none;
             border-radius: 8px;
             cursor: pointer;
+            transition: background 0.3s;
+            margin-top: 10px;
         }
 
         button:hover {
@@ -57,40 +77,57 @@
         }
 
         #msg {
-            color: red;
+            color: #ff4d4d;
             margin-top: 10px;
+            font-size: 14px;
+        }
+
+        .guest-link {
+            margin-top: 15px;
+            font-size: 16px;
+            color: #ff914d;
+            cursor: pointer;
+            text-decoration: underline;
+            transition: color 0.3s;
+        }
+
+        .guest-link:hover {
+            color: #ff7b22;
+        }
+
+        @media (max-width: 400px) {
+            .login-box {
+                width: 90%;
+            }
         }
     </style>
 </head>
 <body>
-<!-- Same style as above -->
 
-<h2>Customer Login</h2>
-<img src="pizza-logo.png" alt="Slice Tracker Logo" style="width:5%">
-<form onsubmit="loginCustomer(event)">
-    <input type="text" id="username" placeholder="Username" required><br>
-    <input type="password" id="password" placeholder="Password" required><br>
-    <button type="submit">Login</button>
-</form>
+<div class="login-box">
+    <img src="pizza-logo.png" alt="Slice Tracker Logo">
+    <h1>JAAS'S Pizzeria</h1> <!-- Pizzeria Name -->
+    <h2>Customer Login</h2> <!-- Changed to Customer Login -->
+    <form onsubmit="login(event)">
+        <input type="text" id="username" placeholder="Username" required><br>
+        <input type="password" id="password" placeholder="Password" required><br>
+        <button type="submit">Login</button>
+    </form>
+    <p id="msg"></p>
+    <p class="guest-link" onclick="goToMenu()">Continue as Guest</p> <!-- Continue as Guest link -->
+</div>
 
 <script>
-    function loginCustomer(e) {
+    function login(e) {
         e.preventDefault();
         const user = document.getElementById('username').value;
         const pass = document.getElementById('password').value;
 
-        fetch(`http://localhost:8080/customer-login?username=${user}&password=${pass}`, {
+        fetch(`http://localhost:8080/customers/login?username=${user}&password=${pass}`, {
             method: "POST"
         }).then(res => res.text())
             .then(data => {
                 if (data === "Login successful") {
-                    window.location.href = "order.html";
+                    window.location.href = "customer_dashboard.html"; // Redirect to customer dashboard
                 } else {
                     document.getElementById("msg").innerText = data;
-                }
-            });
-    }
-</script>
-
-</body>
-</html>

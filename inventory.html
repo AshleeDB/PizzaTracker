@@ -1,17 +1,70 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
     <title>Inventory Dashboard</title>
     <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #fef9f5;
+            color: #333;
+        }
+
+
+        h2 {
+            text-align: center;
+            margin: 20px 0;
+            color: #d62828;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+
+        table {
+            width: 80%;
+            margin: 0 auto;
+            border-collapse: collapse;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border: 1px solid #ccc;
+        }
+
+
+        th {
+            background-color: #ffd166;
+            color: #333;
+        }
+
+
+        tr:hover {
+            background-color: #f0f0f0;
+        }
+
+
         .low-stock {
             color: red;
             font-weight: bold;
         }
+
+
+        .low-stock::after {
+            content: ' ⚠️ Low';
+        }
     </style>
 </head>
 <body>
+
+
 <h2>Ingredient Inventory</h2>
-<table border="1" cellpadding="5">
+<table>
     <thead>
     <tr>
         <th>Ingredient</th>
@@ -22,6 +75,7 @@
     <tbody id="ingredientTable"></tbody>
 </table>
 
+
 <script>
     function fetchInventory() {
         fetch("http://localhost:8080/ingredients")
@@ -30,25 +84,31 @@
                 const table = document.getElementById("ingredientTable");
                 table.innerHTML = "";
 
+
                 data.forEach(ingredient => {
                     const isLow = ingredient.quantity < 5;
                     const row = document.createElement("tr");
 
+
                     row.innerHTML = `
-                            <td>${ingredient.name}</td>
-                            <td class="${isLow ? 'low-stock' : ''}">
-                                ${ingredient.quantity} ${isLow ? '⚠️ Low' : ''}
-                            </td>
-                            <td>${ingredient.nextRestockDate}</td>
-                        `;
+                           <td>${ingredient.name}</td>
+                           <td class="${isLow ? 'low-stock' : ''}">
+                               ${ingredient.quantity}
+                           </td>
+                           <td>${ingredient.nextRestockDate}</td>
+                       `;
+
 
                     table.appendChild(row);
                 });
             });
     }
-    setInterval(fetchInventory, 10000); //Auto-Refresh Every 10s
 
+
+    setInterval(fetchInventory, 10000); // Auto-Refresh Every 10s
     fetchInventory();
 </script>
+
+
 </body>
 </html>
