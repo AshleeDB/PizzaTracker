@@ -1,16 +1,21 @@
+// Defines this class as part of the 'model' package (holds your data layer)
 package com.example.pizzadashboard.model;
-
+// JPA annotations for mapping this class to a database table
 import jakarta.persistence.*;
+// Java's date class for handling restock dates
 import java.time.LocalDate;
-
+// Marks this class as a database entity (i.e., it represents a table)
 @Entity
 public class Ingredient {
+    // Primary key for the Ingredient table
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
+    // Name of the ingredient (e.g., Cheese, Pepperoni, Sauce)
     private String name;
+    // Current quantity of the ingredient in stock
     private int quantity;
+    // The expected date of the next restock
     private LocalDate nextRestockDate;
 
     // Getters & Setters
