@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Order Confirmation | Slice Tracker</title>
+    <link rel="icon" href="slice-logo.png">
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f5f5dc; /* Beige background */
+            color: #333;
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+            font-size: 36px;
+            color: #d62828; /* Dark red for the title */
+        }
+
+        .confirmation-box {
+            background: rgba(255, 255, 255, 0.9);
+            color: #333;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            display: inline-block;
+            max-width: 400px;
+            margin: auto;
+        }
+
+        .confirmation-code {
+            font-size: 20px;
+            font-weight: bold;
+            color: #d62828; /* Dark red for the confirmation code */
+            margin: 20px 0;
+        }
+
+        button {
+            background-color: #ff914d;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #e67833;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Thank You!</h1>
+<div class="confirmation-box">
+    <p>Thank you for placing your order!</p>
+    <p>Your confirmation code is:</p>
+    <div class="confirmation-code" id="confirmationCode">ABC123XYZ</div>
+    <p>Keep this code for your records.</p>
+    <button onclick="goToMenu()">Continue to Menu</button>
+</div>
+
+<script>
+    function goToMenu() {
+        window.location.href = "menu.html"; // Redirect to the menu page
+    }
+
+    // Optionally, you can generate a random confirmation code
+    function generateConfirmationCode() {
+        const code = Math.random().toString(36).substring(2, 8).toUpperCase();
+        document.getElementById("confirmationCode").innerText = code;
+    }
+
+    // Call the function to generate a confirmation code
+    generateConfirmationCode();
+</script>
+
+</body>
+</html>

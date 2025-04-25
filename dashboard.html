@@ -132,6 +132,27 @@
 </div>
 
 <script>
+    function fetchOrderDetails() {
+        // This would typically be fetched from the server
+        const orderDetails = {
+            customerName: "John Doe",
+            confirmationCode: "ABC123XYZ",
+            phoneNumber: "123-456-7890"
+        };
+
+        // Populate the table with order details
+        document.getElementById("customerName").innerText = orderDetails.customerName;
+        document.getElementById("confirmationCode").innerText = orderDetails.confirmationCode;
+        document.getElementById("phoneNumber").innerText = orderDetails.phoneNumber;
+    }
+
+    function goToMenu() {
+        window.location.href = "menu.html"; // Redirect to the menu page
+    }
+
+    // Fetch order details when the page loads
+    fetchOrderDetails();
+
     let menuItems = [];
 
     function showTab(tabId) {
