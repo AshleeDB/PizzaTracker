@@ -1,42 +1,191 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Supplier Info</title>
+    <meta charset="UTF-8">
+    <title>Order | Slice Tracker</title>
+    <link rel="icon" href="pizza-logo.png">
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #fefcf8;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+
+
+        header {
+            background-color: #ffdf9e;
+            padding: 20px 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+
+        header img {
+            width: 80px;
+        }
+
+
+        h1 {
+            margin: 10px 0 0;
+            font-size: 28px;
+            color: #333;
+        }
+
+
+        form {
+            margin: 30px auto;
+            width: 90%;
+            max-width: 500px;
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+        }
+
+
+        label {
+            display: inline-block;
+            width: 100%;
+            margin: 15px 0 5px;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+
+        input[type="number"] {
+            width: 100%;
+            padding: 8px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+        }
+
+
+        button {
+            margin-top: 20px;
+            background-color: #ff914d;
+            color: white;
+            padding: 12px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+
+        button:hover {
+            background-color: #e67833;
+        }
+
+
+        .total {
+            font-size: 20px;
+            margin-top: 15px;
+            font-weight: bold;
+            color: #333;
+        }
+
+
+        .soldout {
+            color: grey;
+            font-style: italic;
+        }
+    </style>
 </head>
 <body>
-<h2>Supplier Contacts</h2>
-<table border="1" cellpadding="5">
-  <thead>
-  <tr>
-    <th>Company Name</th>
-    <th>Email</th>
-    <th>Phone</th>
-  </tr>
-  </thead>
-  <tbody id="supplierTable"></tbody>
-</table>
+
+
+<header>
+    <img src="pizza-logo.png" alt="Slice Tracker Logo">
+    <h1>Slice Tracker</h1>
+</header>
+
+
+<form onsubmit="submitOrder(event)">
+    <div id="menuList"></div>
+    <p class="total">Total: $<span id="total">0.00</span></p>
+    <button type="submit">Place Order</button>
+</form>
+
 
 <script>
-  function fetchSuppliers() {
-    fetch("http://localhost:8080/suppliers")
+    let menuItems = [];
+
+
+    function fetchMenu() {
+        fetch("http://localhost:8080/menu")
             .then(res => res.json())
             .then(data => {
-              const table = document.getElementById("supplierTable");
-              table.innerHTML = "";
+                menuItems = data;
+                const menuList = document.getElementById("menuList");
+                menuList.innerHTML = "";
 
-              data.forEach(supplier => {
-                const row = document.createElement("tr");
-                row.innerHTML = `
-                            <td>${supplier.name}</td>
-                            <td><a href="mailto:${supplier.email}">${supplier.email}</a></td>
-                            <td>${supplier.phone}</td>
-                        `;
-                table.appendChild(row);
-              });
+
+                data.forEach(item => {
+                    const ingredients = item.ingredients.map(i => i.ingredient.name).join(', ');
+                    const available = item.ingredients.every(i => i.ingredient.quantity >= i.amountRequired);
+
+
+                    const div = document.createElement("div");
+                    if (available) {
+                        div.innerHTML = `
+                           <label title="Ingredients: ${ingredients}">${item.name} ($${item.price})</label>
+                           <input type="number" min="0" value="0" data-id="${item.id}" data-price="${item.price}" onchange="updateTotal()">
+                       `;
+                    } else {
+                        div.innerHTML = `<label class="soldout">${item.name} ($${item.price}) – Sold Out</label>`;
+                    }
+                    menuList.appendChild(div);
+                });
             });
-  }
+    }
 
-  fetchSuppliers();
+
+    function updateTotal() {
+        let total = 0;
+        document.querySelectorAll("input[type='number']").forEach(input => {
+            const qty = parseInt(input.value) || 0;
+            const price = parseFloat(input.getAttribute("data-price"));
+            total += qty * price;
+        });
+        document.getElementById("total").innerText = total.toFixed(2);
+    }
+
+
+    function submitOrder(e) {
+        e.preventDefault();
+        const order = [];
+
+
+        document.querySelectorAll("input[type='number']").forEach(input => {
+            const qty = parseInt(input.value);
+            if (qty > 0) {
+                order.push({
+                    menuItemId: parseInt(input.getAttribute("data-id")),
+                    quantity: qty
+                });
+            }
+        });
+
+
+        fetch("http://localhost:8080/order", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(order)
+        })
+            .then(res => res.text())
+            .then(msg => {
+                alert(msg);
+                location.reload();
+            });
+    }
+
+
+    fetchMenu();
 </script>
+
+
 </body>
 </html>
+
