@@ -5,12 +5,19 @@ import java.util.List;
 
 @Entity
 public class MenuItem {
+      // Primary key with auto-increment strategy
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
+ // Name of the menu item (e.g., "Pepperoni Pizza")
     private String name;
+     // Price of the menu item
     private double price;
+      // One MenuItem has many MenuItemIngredient entries
+    // 'mappedBy' points to the 'menuItem' field in the MenuItemIngredient class
+    // Cascade.ALL means changes to a MenuItem cascade to its ingredients
+    // FetchType.EAGER means ingredients will load immediately with the menu item
+    @OneToMany(mappedBy = "menuItem", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 
     @OneToMany(mappedBy = "menuItem", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<MenuItemIngredient> ingredients;
