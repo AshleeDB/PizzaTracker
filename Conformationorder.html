@@ -7,7 +7,7 @@
     <style>
         body {
             font-family: 'Segoe UI', sans-serif;
-            background-color: #f5f5dc; /* Beige background */
+            background-color: #f5f5dc;
             color: #333;
             text-align: center;
             padding: 60px 20px;
@@ -16,7 +16,7 @@
         h1 {
             margin-bottom: 20px;
             font-size: 36px;
-            color: #d62828; /* Dark red for the title */
+            color: #d62828;
         }
 
         .confirmation-box {
@@ -31,10 +31,11 @@
         }
 
         .confirmation-code {
-            font-size: 20px;
+            font-size: 24px;
             font-weight: bold;
-            color: #d62828; /* Dark red for the confirmation code */
+            color: #d62828;
             margin: 20px 0;
+            word-break: break-word;
         }
 
         button {
@@ -59,24 +60,28 @@
 <div class="confirmation-box">
     <p>Thank you for placing your order!</p>
     <p>Your confirmation code is:</p>
-    <div class="confirmation-code" id="confirmationCode">ABC123XYZ</div>
+    <div class="confirmation-code" id="confirmationCode">
+        Loading...
+    </div>
     <p>Keep this code for your records.</p>
     <button onclick="goToMenu()">Continue to Menu</button>
 </div>
 
 <script>
     function goToMenu() {
-        window.location.href = "menu.html"; // Redirect to the menu page
+        window.location.href = "menu.html"; 
     }
 
-    // Optionally, you can generate a random confirmation code
-    function generateConfirmationCode() {
-        const code = Math.random().toString(36).substring(2, 8).toUpperCase();
-        document.getElementById("confirmationCode").innerText = code;
-    }
-
-    // Call the function to generate a confirmation code
-    generateConfirmationCode();
+    // Fetch the confirmation code from backend
+    fetch('http://localhost:8080/api/order/confirmation')
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById("confirmationCode").innerText = data.confirmationCode;
+        })
+        .catch(error => {
+            console.error('Error fetching confirmation code:', error);
+            document.getElementById("confirmationCode").innerText = "Error loading code.";
+        });
 </script>
 
 </body>
