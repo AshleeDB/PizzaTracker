@@ -7,21 +7,25 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 public class MenuItemIngredient {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    // Primary key with auto-increment strategy
     private Long id;
-// Many MenuItemIngredient entries can point to one MenuItem (MenuItem is the parent)
+
     @ManyToOne
-    @JoinColumn(name = "menu_item_id") // This is the foreign key column in the table
-    @JsonIgnore // Prevents infinite recursion when serializing to JSON (MenuItem -> MenuItemIngredient -> MenuItem)
+    @JoinColumn(name = "menu_item_id")
+    @JsonIgnore
     private MenuItem menuItem;
- // Many MenuItemIngredient entries can point to one Ingredient (Ingredient is the parent)
+
     @ManyToOne
-    @JoinColumn(name = "ingredient_id") // This is the foreign key column in the table
+    @JoinColumn(name = "ingredient_id")
     private Ingredient ingredient;
-  // The amount of this ingredient required for the menu item
+
 
     private int amountRequired;
-   // Getters & Setters
+
+
+
+
+
+    // Getters & Setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
