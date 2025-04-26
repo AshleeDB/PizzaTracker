@@ -131,3 +131,15 @@
                     window.location.href = "customer_dashboard.html"; // Redirect to customer dashboard
                 } else {
                     document.getElementById("msg").innerText = data;
+                    })
+            .catch(error => {
+                console.error('Error during login:', error);
+                document.getElementById("msg").innerText = "Something went wrong. Please try again.";
+            });
+    }
+
+    function goToMenu() {
+        window.location.href = "menu.html"; // <-- Make sure this page exists
+    }
+</script> 
+    
