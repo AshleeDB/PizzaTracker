@@ -13,7 +13,7 @@ public class Ingredient {
     private int quantity;
     private LocalDate nextRestockDate;
 
-    // Getters & Setters
+    // Getter and setters for the ID, NAME, QUANTITY, AND GETNEXTRESTOCKDATE
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
