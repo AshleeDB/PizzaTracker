@@ -21,7 +21,7 @@ public class OrderItem {
 
     private int quantity;
 
-    // Getters and Setters
+    // Getters and Setters for ID, Get order, get menu item and get quantity
     public Long getId() { return id; }
 
     public void setId(Long id) { this.id = id; }
