@@ -16,7 +16,7 @@ public class MenuItem {
     private List<MenuItemIngredient> ingredients;
 
 
-    // Getters & Setters
+    // Getters AND Setters for the ID, NAME, PRICE.
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
