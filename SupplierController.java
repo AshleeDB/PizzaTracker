@@ -8,15 +8,15 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/suppliers")
+@RequestMapping("/suppliers")// Base URL path for all methods in this controller
 @CrossOrigin(origins = "*")
-public class SupplierController {
+public class SupplierController {// Declares the SupplierController class
 
     @Autowired
     private SupplierRepository supplierRepo;
 
     @GetMapping
     public List<Supplier> getAllSuppliers() {
-        return supplierRepo.findAll();
+        return supplierRepo.findAll();//fetches all suppliers from the database. 
     }
 }
