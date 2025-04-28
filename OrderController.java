@@ -24,7 +24,7 @@ public class OrderController {
 
     @Autowired
     private OrderItemRepository orderItemRepo;  // Missing before!
-
+//If the order is placed, send the confirmation code and save the order. 
     @PostMapping("/order")
     public ResponseEntity<String> placeOrder(@RequestBody List<OrderItemRequest> items) {
         try {
@@ -42,7 +42,7 @@ public class OrderController {
                 orderItem.setQuantity(itemRequest.getQuantity());
                 orderItemRepo.save(orderItem);
 
-                // 🧹 Decrease inventory here
+                //  Decrease inventory here
                 for (MenuItemIngredient mii : menuItem.getIngredients()) {
                     Ingredient ingredient = mii.getIngredient();
                     int totalAmountNeeded = mii.getAmountRequired() * itemRequest.getQuantity();
@@ -50,7 +50,7 @@ public class OrderController {
                     ingredientRepo.save(ingredient);
                 }
             }
-
+//Order is placed and send the confirmation code. 
             return ResponseEntity.ok("✅ Order placed! Confirmation #" + order.getConfirmationCode());
         } catch (Exception e) {
             e.printStackTrace();
@@ -62,7 +62,7 @@ public class OrderController {
     public List<Order> getOrders() {
         return orderRepo.findAll();
     }
-
+//generate random confirmation code. 
     private String generateConfirmationCode() {
         Random random = new Random();
         int number = 10000 + random.nextInt(90000);
