@@ -13,7 +13,7 @@ public class Supplier {
     private String email;
     private String phone;
 
-    // Getters and Setters
+    // Getters and Setters for the get id, name, email, phone.
     public Long getId() {
         return id;
     }
