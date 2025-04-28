@@ -19,7 +19,7 @@ public class Customer {
         this.id = id;
     }
 
-    public String getUsername() {
+    public String getUsername() {// sets the setters and getters for the username
         return username;
     }
 
@@ -27,11 +27,11 @@ public class Customer {
         this.username = username;
     }
 
-    public String getPassword() {
+    public String getPassword() {// sets the setters and getters for the password 
         return password;
     }
 
-    public void setPassword(String password) {
+    public void setPassword(String password) {// sets password
         this.password = password;
     }
 }
