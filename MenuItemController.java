@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.stream.Collectors;// Imports Stream API for filtering
 
 @RestController
 @RequestMapping("/menu")
@@ -19,10 +19,10 @@ public class MenuItemController {
     private MenuItemRepository menuItemRepo;
 
     @GetMapping
-    public List<MenuItem> getAvailableMenuItems() {
+    public List<MenuItem> getAvailableMenuItems() { // Get all menu items from the database and start a stream
         return menuItemRepo.findAll().stream()
-                .filter(item -> item.getIngredients().stream()
-                        .allMatch(mii -> mii.getIngredient().getQuantity() >= mii.getAmountRequired()))
+                .filter(item -> item.getIngredients().stream() //look at its ingredients for each menu item
+                        .allMatch(mii -> mii.getIngredient().getQuantity() >= mii.getAmountRequired()))// only keep menu items with ingredients in stock
                 .toList();
     }
 
