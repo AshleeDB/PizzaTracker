@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import java.util.List;
 
 @Entity
-@Table(name = "orders") // ✅ avoids SQL keyword conflict
+@Table(name = "orders") 
 public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -15,7 +15,7 @@ public class Order {
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private List<OrderItem> items;
 
-    // Getters and setters
+    // Getters and setters for ID, get confirmation code, and set confirmation code.
     public Long getId() {
         return id;
     }
