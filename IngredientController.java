@@ -9,7 +9,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/ingredients")
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = "*")// Allows Cross-Origin requests from any domain
 public class IngredientController {
 
     @Autowired
@@ -21,11 +21,11 @@ public class IngredientController {
     }
 
     @PutMapping("/{id}/add")
-    public String addInventory(@PathVariable Long id, @RequestParam int amount) {
+    public String addInventory(@PathVariable Long id, @RequestParam int amount) {// adds a quantity to an ingredient by ID
         Ingredient ingredient = ingredientRepo.findById(id).orElse(null);
         if (ingredient != null) {
-            ingredient.setQuantity(ingredient.getQuantity() + amount);
-            ingredientRepo.save(ingredient);
+            ingredient.setQuantity(ingredient.getQuantity() + amount);// increases quantity by specific amount 
+            ingredientRepo.save(ingredient);// saves inventory update to the data base 
             return "Inventory updated!";
         }
         return "Ingredient not found.";
